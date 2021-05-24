@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv='cache-control' content='no-cache'>
+<meta http-equiv='expires' content='0'>
+<meta http-equiv='pragma' content='no-cache'>
+    <title>Cowin Slot Tracker</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300|Open+Sans+Condensed:300|Open+Sans:300"
+          rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="../CowinAppSite/jquery/JSON-to-Table.min.1.0.0.js"></script>
+    <style>
+        body {
+            font-family: 'Josefin Sans', sans-serif;
+            background-color:#fafafa;
+        }
+
+        h1 {
+            font-size: 40px;
+            color: #fbfbfb;
+            text-align: center;
+        }
+
+        h1 span {
+            font-size: 25px;
+            color: #477dd7;
+        }
+
+        h2 {
+            font-family: "Open Sans Condensed", sans-serif;
+            font-size: 18px;
+        }
+
+        .margin-bottom {
+            margin-bottom: 50px;
+        }
+        h1 { margin:0px auto 0px auto;}
+    </style>
+</head>
+<body>
+<h1 style="background-color: #46719d;text-align: left;padding-left: 14px;">Cowin Slot Tracker</h1>
+
+
+<h2 style="padding: 10px;background: #aad4ff;">List of District for State: <span style="text-decoration: underline;" id="stName"></span></h2>
+<div id="stateTable" class="table margin-bottom" style="padding: 10px;"></div>
+<div></div>
+
+<script type="text/javascript">
+	$.ajaxSetup({
+		cache: false
+	});
+    $(document).ready(function () {
+	
+		var url = new URL(location.href);
+		var stateCode = url.searchParams.get("stateCd");
+		var stateName = url.searchParams.get("stateName");
+		$('#stName').text(stateName);
+		$.ajaxSetup({
+		headers : {
+			'Cache-Control' : 'no-cache',
+			}
+		});
+
+        var cowinApiGetDistrictList = "http://localhost:9092/cowin/getDistrictListByState?state="+stateCode+"";
+		$.getJSON(cowinApiGetDistrictList, function (data) {
+            $('#stateTable').createTable(data, {
+                // General Style for Table
+                borderWidth: '1px',
+                borderStyle: 'solid',
+                borderColor: '#DDDDDD',
+                fontFamily: 'Verdana, Helvetica, Arial, FreeSans, sans-serif',
+
+                // Table Header Style
+                thBg: '#F3F3F3',
+                thColor: '#0E0E0E',
+                thHeight: '30px',
+                thFontFamily: '"Open Sans Condensed", sans-serif',
+                thFontSize: '14px',
+                thTextTransform: 'capitalize',
+
+                // Table Body/Row Style
+                trBg: '#fff',
+                trColor: '#0E0E0E',
+                trHeight: '25px',
+                trFontFamily: '"Open Sans", sans-serif',
+                trFontSize: '13px',
+
+                // Table Body's Column Style
+                tdPaddingLeft: '10px',
+                tdPaddingRight: '10px'
+            });
+			
+        });
+		
+    });
+</script>
+</body>
+</body>
+</html>

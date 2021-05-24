@@ -1,0 +1,213 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv='cache-control' content='no-cache'>
+<meta http-equiv='expires' content='0'>
+<meta http-equiv='pragma' content='no-cache'>
+    <title>Cowin Slot Tracker</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300|Open+Sans+Condensed:300|Open+Sans:300"
+          rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="../CowinAppSite/jquery/JSON-to-Table.min.1.0.0.js"></script>
+    <style>
+        body {
+            font-family: 'Josefin Sans', sans-serif;
+            background-color:#fafafa;
+        }
+
+        h1 {
+            font-size: 40px;
+            color: #fbfbfb;
+            text-align: center;
+        }
+
+        h1 span {
+            font-size: 25px;
+            color: #477dd7;
+        }
+
+        h2 {
+            font-family: "Open Sans Condensed", sans-serif;
+            font-size: 18px;
+        }
+
+        .margin-bottom {
+            margin-bottom: 50px;
+        }
+        h1 { margin:0px auto 0px auto;}
+    </style>
+</head>
+<body>
+<h1 style="background-color: #46719d;text-align: left;padding-left: 14px;"><a href="CowinTrack.html" style="text-decoration: none;color: antiquewhite;">Cowin Slot Tracker</a></h1>
+
+
+
+<fieldset style="padding: 0px;">
+
+<!-- Form Name -->
+<legend style="padding-top: 10px;padding-left: 28px;">Select Parameter</legend>
+<!-- Text input-->
+<div class="form-group col-md-12">
+  <label class="col-md-2 control-label" for="txtState">State Code</label>  
+  <div class="col-md-4" style="display: -webkit-inline-box;">
+  <input id="txtState" name="txtState" type="text" placeholder="State Code" class="form-control input-md" required="">
+  <span class="help-block"><a target="_blank" href="stateList.html">Get State Code</a></span> 
+  <div class="col-md-4"></div>
+  </div>
+  <br>
+  <label class="col-md-2 control-label" for="txtDistrict">District Code</label>  
+  <div class="col-md-4" style="display: -webkit-inline-box;">
+  <input id="txtDistrict" name="txtDistrict" type="text" placeholder="District Code" class="form-control input-md" required="">
+  <span class="help-block"><a target="_blank" href="districtList.html?stateCd="+this.value+"">Get District Code</a></span> 
+  <div class="col-md-4"></div>
+  </div>
+  <br>
+  <label class="col-md-2 control-label" for="txtDate">Date</label>  
+  <div class="col-md-4" style="display: -webkit-inline-box;">
+  <input id="txtDate" name="txtDate" type="text" placeholder="Date" value="" class="form-control input-md" required="">
+  <span class="help-block">dd-mm-yyyy</span> 
+  <div class="col-md-4"></div>
+  </div>
+  <br>
+  <label class="col-md-2 control-label" for="txtMinAge">Min Age</label>  
+  <div class="col-md-4" style="display: -webkit-inline-box;">
+  <input id="txtMinAge" name="txtMinAge" type="text" placeholder="Min Age" class="form-control input-md" required="">
+  <span class="help-block">18 or 45</span> 
+  <div class="col-md-4"></div>
+  </div>
+  <br>
+  <label class="col-md-2 control-label" for="txtState"></label>
+  <div class="col-md-8" style="display: -webkit-inline-box;">
+	<button id="reloadData" name="reloadData" class="btn btn-primary" onClick="reLoadData();">Check Slots</button>
+  </div>
+  <br>
+  <label class="col-md-2 control-label" for="txtState"></label>  
+  <div class="col-md-8" style="display: -webkit-inline-box;">
+  Auto Tracker: <a href="CowinTrack-AMD.html" target="_blank">Ahmedabad</a> || <a href="CowinTrack-GH.html" target="_blank">Gandhinagar</a>
+  </div>
+  
+</div>
+
+</fieldset>
+
+
+
+
+<h2 style="padding: 10px;background: #aad4ff;">List of Available slots For Current Day</h2>
+<div id="dayTable" class="table margin-bottom" style="padding: 10px;"></div>
+<div></div>
+
+<h2 style="padding: 10px;background: #aad4ff;">List of Available slots For this Week</h2>
+<div id="weekTable" class="table margin-bottom" style="padding: 10px;"></div>
+
+<script type="text/javascript">
+	$.ajaxSetup({
+		cache: false
+	});
+    $(document).ready(function () {
+		var d = new Date();
+		var dtStr = d.getDate()+1;
+		if(dtStr < 10){
+			dtStr = "0" + dtStr;
+		}
+		var monthStr = d.getMonth()+1;
+		if(monthStr < 10){
+			monthStr = "0" + monthStr;
+		}
+		var strDate = dtStr + "-" + monthStr + "-" + d.getFullYear();
+		$('#txtDate').val(strDate);
+		
+    });
+	
+	function reLoadData(){
+		$('#dayTable').html('');
+		$('#weekTable').html('');
+		var st = $('#txtState').val();
+		var dist = $('#txtDistrict').val();
+		var dt = $('#txtDate').val();
+		var minAge = $('#txtMinAge').val();
+		var ranNo = Math.random()*Math.random();
+		$.ajaxSetup({
+		headers : {
+			'Cache-Control' : 'no-cache',
+			}
+		});
+        var cowinApiGetDaySlot = "http://localhost:9092/cowin/getEmptySlotsForDistrict?rn="+ranNo+"&state="+st+"&district="+dist+"&minAgeLimit="+minAge+"&inDate="+dt+"";
+		$.getJSON(cowinApiGetDaySlot, function (data) {
+            $('#dayTable').createTable(data, {
+                // General Style for Table
+                borderWidth: '1px',
+                borderStyle: 'solid',
+                borderColor: '#DDDDDD',
+                fontFamily: 'Verdana, Helvetica, Arial, FreeSans, sans-serif',
+
+                // Table Header Style
+                thBg: '#F3F3F3',
+                thColor: '#0E0E0E',
+                thHeight: '30px',
+                thFontFamily: '"Open Sans Condensed", sans-serif',
+                thFontSize: '14px',
+                thTextTransform: 'capitalize',
+
+                // Table Body/Row Style
+                trBg: '#fff',
+                trColor: '#0E0E0E',
+                trHeight: '25px',
+                trFontFamily: '"Open Sans", sans-serif',
+                trFontSize: '13px',
+
+                // Table Body's Column Style
+                tdPaddingLeft: '10px',
+                tdPaddingRight: '10px'
+            });
+        });
+		
+		$.ajaxSetup({
+		headers : {
+			'Cache-Control' : 'no-cache',
+			}
+		});
+		var cowinApiGetWeekSlot = "http://localhost:9092/cowin/getEmptySlotsForDistrictForWeek?state="+st+"&district="+dist+"&minAgeLimit="+minAge+"&inDate="+dt+"";
+		$.getJSON(cowinApiGetWeekSlot, function (data) {
+            $('#weekTable').createTable(data, {
+                // General Style for Table
+                borderWidth: '1px',
+                borderStyle: 'solid',
+                borderColor: '#DDDDDD',
+                fontFamily: 'Verdana, Helvetica, Arial, FreeSans, sans-serif',
+
+                // Table Header Style
+                thBg: '#F3F3F3',
+                thColor: '#0E0E0E',
+                thHeight: '30px',
+                thFontFamily: '"Open Sans Condensed", sans-serif',
+                thFontSize: '14px',
+                thTextTransform: 'capitalize',
+
+                // Table Body/Row Style
+                trBg: '#fff',
+                trColor: '#0E0E0E',
+                trHeight: '25px',
+                trFontFamily: '"Open Sans", sans-serif',
+                trFontSize: '13px',
+
+                // Table Body's Column Style
+                tdPaddingLeft: '10px',
+                tdPaddingRight: '10px'
+            });
+        });
+	
+	}
+	function reLoadPage(){
+		location.reload();
+	}
+	
+</script>
+</body>
+</body>
+</html>
